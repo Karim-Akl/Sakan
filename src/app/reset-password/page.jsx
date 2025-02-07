@@ -13,12 +13,14 @@ function ResetPassword() {
   const [isLoading, setIsLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
 
-  const storedCode = typeof window !== "undefined" ? localStorage.getItem("code-verify") : null;
-  const storedEmail = typeof window !== "undefined" ? localStorage.getItem("email") : null;
+  const storedCode =
+    typeof window !== "undefined" ? localStorage.getItem("code-verify") : null;
+  const storedEmail =
+    typeof window !== "undefined" ? localStorage.getItem("email") : null;
 
   useEffect(() => {
     if (!storedEmail || !storedCode) {
-      setError("Verification code or email is missing. Please try again.");
+      // setError("Verification code or email is missing. Please try again.");
     }
   }, [storedEmail, storedCode]);
 
@@ -29,7 +31,6 @@ function ResetPassword() {
       setError("Verification code or email is missing.");
       return;
     }
-
     if (!newPassword || !confirmPassword) {
       setError("All fields are required.");
       return;
@@ -45,16 +46,19 @@ function ResetPassword() {
     setSuccessMessage("");
 
     try {
-      const response = await fetch("http://sakan.runasp.net/api/Account/ResetPassword", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: storedEmail,
-          verificationCode: storedCode,
-          newPassword,
-          confirmPassword,
-        }),
-      });
+      const response = await fetch(
+        "http://sakan.runasp.net/api/Account/ResetPassword",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: storedEmail,
+            verificationCode: storedCode,
+            newPassword,
+            confirmPassword,
+          }),
+        }
+      );
 
       const contentType = response.headers.get("content-type");
 
@@ -65,7 +69,6 @@ function ResetPassword() {
         data = await response.text(); // Parse as plain text
       }
 
-
       if (!response.ok) {
         throw new Error(data.message || "Failed to reset password.");
       }
@@ -74,7 +77,7 @@ function ResetPassword() {
       localStorage.removeItem("email");
 
       setSuccessMessage("Password reset successful! Redirecting to login...");
-      setTimeout(() => router.push("/login"), 3000);
+      setTimeout(() => router.push("/login"), 2000);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -130,7 +133,9 @@ function ResetPassword() {
           {error && <p className="text-red-500 text-sm">{error}</p>}
 
           {/* Success Message */}
-          {successMessage && <p className="text-green-500 text-sm">{successMessage}</p>}
+          {successMessage && (
+            <p className="text-green-500 text-sm">{successMessage}</p>
+          )}
 
           {/* Submit Button */}
           <button
